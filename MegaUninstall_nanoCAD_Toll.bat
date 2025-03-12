@@ -16,15 +16,30 @@ echo  ███████ ████████████    
 echo  ███████ ██████████        ████████████ █████████████████████████ ██ ████████ ████████  █████████ ███ 
 echo  ███████ ████████          █ █ █ ███ ███████  █████   █ ███ █████ █  ██  ██ ███  ███ █████   ██ ██  █
 echo.
-
-
+echo Версия программы 2.2025. Для проверки обновления нажмите Enter.
+echo.
+echo.
 echo Какое приложение вы хотите удалить?
 echo 1. nanoCAD Механика PRO
 echo 2. Платформа nanoCAD x64
 echo 3. Platform nanoCAD x64
 echo.
+echo.
 set /p softwareChoice="Введите номер вашего выбора (1, 2 или 3): "
 echo.
+echo.
+
+if "%updateChoice%"=="" (
+    echo Обновление программы...
+    powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
+    echo Замена текущей версии...
+    move /Y "update.bat" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    echo Перезапуск...
+    start "" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    
+)
+
+
 
 if "%softwareChoice%"=="1" (
     set version=nanoCAD Механика PRO
