@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=006.3.2025
+set verbat=007.3.2025
 
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -206,6 +206,8 @@ echo 3. Платформа nanoCAD 23.5
 echo 4. Платформа nanoCAD 24.0
 echo 5. Платформа nanoCAD 24.1
 echo 6. Платформа nanoCAD 24.5
+echo 7. Платформа nanoCAD 25.0
+echo 8. Платформа nanoCAD 25.1
 echo.
 set /p versionChoice="Введите номер выбранной версии, например 23.0 (разделитель - точка): "
 
@@ -227,6 +229,12 @@ if "%versionChoice%"=="23.0" (
 ) else if "%versionChoice%"=="24.5" (
     set version=Платформа nanoCAD 24.5
     goto NC_x64_24_5
+) else if "%versionChoice%"=="25.0" (
+    set version=Платформа nanoCAD 25.0
+    goto NC_x64_25_0
+) else if "%versionChoice%"=="25.1" (
+    set version=Платформа nanoCAD 25.1
+    goto NC_x64_25_1
 ) else (
     echo Неверный ввод версии. Необходимо ввести только номер версии, например - 23.0. Попробуйте снова.
     echo.
@@ -853,6 +861,133 @@ REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD x64\24.5" /f
 
 echo Очистка Реестра завершена!
 echo Очистка Реестра завершена: %date% %time% >> log.txt
+goto Exit
+
+
+
+
+
+
+
+
+
+
+
+
+:NC_x64_25_0
+echo Выбрано удаление %version%.  %date% %time% >> log.txt
+cls
+
+echo.
+echo Эта утилита запустит удаление %version%. 
+echo.
+echo В скрытом режиме будут очищены все папки этой программы в Program Files, Program Data и AppData.
+echo Далее в системном реестре будет очищены разделы Nanosoft для %version%.
+echo.
+echo Если готовы, нажмите любую клавишу чтобы продолжить . . .
+pause
+echo Запуск удаления %version%
+echo Запуск удаления %version% %date% %time% >> log.txt
+
+msiexec /x {413ADC1D-6F78-4A37-B7BC-9FD9F762A5C3} /qn
+
+echo Удаление %version% завершено!
+echo Удаление %version% завершено: %date% %time% >> log.txt
+
+echo Очистка ProgramFiles, ProgramData и AppData...
+echo Очистка ProgramFiles, ProgramData и AppData: %date% %time% >> log.txt
+
+del "%APPDATA%\Nanosoft\nanoCAD x64 25.0" /Q /S
+rmdir /S /Q "%APPDATA%\Nanosoft\nanoCAD x64 25.0"
+
+del "%ProgramData%\Nanosoft\nanoCAD x64 25.0"  /Q /S
+rmdir /S /Q "%ProgramData%\Nanosoft\nanoCAD x64 25.0"
+
+del "%ProgramFiles%\Nanosoft\nanoCAD x64 25.0"  /Q /S
+rmdir /S /Q "%ProgramFiles%\Nanosoft\nanoCAD x64 25.0"
+echo Очистка ProgramFiles, ProgramData и AppData завершена: %date% %time% >> log.txt
+
+echo Очистка Реестра...
+echo Очистка Реестра: %date% %time% >> log.txt
+
+REG DELETE "HKCU\SOFTWARE\Nanosoft\nanoCAD x64\25.0" /f
+REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD x64\25.0" /f
+
+echo Очистка Реестра завершена!
+echo Очистка Реестра завершена: %date% %time% >> log.txt
+goto Exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:NC_x64_25_1
+echo Выбрано удаление %version%.  %date% %time% >> log.txt
+cls
+
+echo.
+echo Эта утилита запустит удаление %version%. 
+echo.
+echo В скрытом режиме будут очищены все папки этой программы в Program Files, Program Data и AppData.
+echo Далее в системном реестре будет очищены разделы Nanosoft для %version%.
+echo.
+echo Если готовы, нажмите любую клавишу чтобы продолжить . . .
+pause
+echo Запуск удаления %version%
+echo Запуск удаления %version% %date% %time% >> log.txt
+
+msiexec /x {DC9115FB-521F-428A-B734-8A4E715964AD} /qn
+
+echo Удаление %version% завершено!
+echo Удаление %version% завершено: %date% %time% >> log.txt
+
+echo Очистка ProgramFiles, ProgramData и AppData...
+echo Очистка ProgramFiles, ProgramData и AppData: %date% %time% >> log.txt
+
+del "%APPDATA%\Nanosoft\nanoCAD x64 25.1" /Q /S
+rmdir /S /Q "%APPDATA%\Nanosoft\nanoCAD x64 25.1"
+
+del "%ProgramData%\Nanosoft\nanoCAD x64 25.1"  /Q /S
+rmdir /S /Q "%ProgramData%\Nanosoft\nanoCAD x64 25.1"
+
+del "%ProgramFiles%\Nanosoft\nanoCAD x64 25.1"  /Q /S
+rmdir /S /Q "%ProgramFiles%\Nanosoft\nanoCAD x64 25.1"
+echo Очистка ProgramFiles, ProgramData и AppData завершена: %date% %time% >> log.txt
+
+echo Очистка Реестра...
+echo Очистка Реестра: %date% %time% >> log.txt
+
+REG DELETE "HKCU\SOFTWARE\Nanosoft\nanoCAD x64\25.1" /f
+REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD x64\25.1" /f
+
+echo Очистка Реестра завершена!
+echo Очистка Реестра завершена: %date% %time% >> log.txt
+
+goto Exit
+
+
+
+
+
+
+
+
+
+
+
+
+:NC_x64_25_5
+
 
 goto Exit
 
