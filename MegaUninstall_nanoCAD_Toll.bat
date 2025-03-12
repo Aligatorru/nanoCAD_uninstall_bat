@@ -86,10 +86,6 @@ if exist %temp%\update.bat (
 
 :choose_software
 echo.
-@echo off
-chcp 65001 >> log.txt
-
-::echo.
 echo.                                                                                                     
 echo      ████████ ███████                                                ███████▄     ███     ████████▄   
 echo    ██████████ ███████      █▄█████    ████████ █▄█████    █████▄   █████ ████    █████    ███  █████▄ 
