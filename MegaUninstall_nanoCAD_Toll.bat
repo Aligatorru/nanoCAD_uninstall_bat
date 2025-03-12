@@ -7,7 +7,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=3.2025
+set verbat=003.3.2025
 
 chcp 65001 >> log.txt
 echo. >> log.txt
@@ -26,10 +26,10 @@ echo  ███████ ████████████    
 echo  ███████ ██████████        ████████████ █████████████████████████ ██ ████████ ████████  █████████ ███ 
 echo  ███████ ████████          █ █ █ ███ ███████  █████   █ ███ █████ █  ██  ██ ███  ███ █████   ██ ██  █
 echo.
-echo Версия скрипта %verbat% Для проверки обновления нажмите Enter.
+echo Версия утилиты %verbat%. Для проверки обновления нажмите Enter.
 echo.
 echo.
-echo Какое приложение вы хотите удалить?
+echo Какую программу вы хотите удалить?
 echo 1. nanoCAD Механика PRO
 echo 2. Платформа nanoCAD x64
 echo 3. Platform nanoCAD x64
@@ -54,8 +54,8 @@ if "%softwareChoice%"=="1" (
     set version=Platform nanoCAD 
     goto choose_platform_nci_version
 ) else if "%softwareChoice%"=="" (
-    echo Загрузка
-    echo Запрошено обновление программы: %date% %time% >> log.txt
+    echo Проверка на сервере
+    echo Запрошено обновление утилиты: %date% %time% >> log.txt
     setlocal enabledelayedexpansion
     for /L %%i in (1,1,40) do (
         <nul set /p=.  
@@ -63,9 +63,9 @@ if "%softwareChoice%"=="1" (
     )
     echo.
     echo Готово!
-    set /p softwareChoice="Нажмите клавишу Enter для обновления..."
-    echo Обновление скрипта...
-    echo Перезапуск скрипта для обновления. Текуая версия: %verbat%. %date% %time% >> log.txt
+    set /p softwareChoice="Нажмите клавишу Enter для перезапуска утилиты..."
+    echo Обновление утилиты...
+    echo Перезапуск утилиты для обновления. Текуая версия: %verbat%. %date% %time% >> log.txt
     powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
     echo Замена текущей версии...
     move /Y "update.bat" "%~dp0%~nx0"
