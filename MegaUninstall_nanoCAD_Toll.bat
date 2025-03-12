@@ -8,7 +8,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=005.3.2025
+set verbat=006.3.2025
 
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -1003,3 +1003,4 @@ pause
 echo Выход из программы.
 echo Выход из программы после удаления %version% %date% %time% >> log.txt
 echo. >> log.txt
+exit
