@@ -36,7 +36,7 @@ if "%updateChoice%"=="" (
     move /Y "update.bat" "%~dp0MegaUninstall nanoCAD Toll.bat"
     echo Перезапуск...
     start "" "%~dp0MegaUninstall nanoCAD Toll.bat"
-    
+    exit
 )
 
 
