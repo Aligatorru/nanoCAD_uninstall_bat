@@ -105,9 +105,12 @@ echo.
 :: echo Версия утилиты %verbat%
 echo.
 echo Какую программу вы хотите удалить?
-echo 1. nanoCAD Механика PRO
-echo 2. Платформа nanoCAD x64
-echo 3. Platform nanoCAD x64
+echo.
+echo   1. nanoCAD Механика PRO
+echo.
+echo   2. Платформа nanoCAD x64
+echo.
+echo   3. Platform nanoCAD x64
 echo.
 set /p softwareChoice="Введите номер выбранной программы (1, 2 или 3): "
 
