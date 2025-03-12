@@ -63,9 +63,9 @@ if "%softwareChoice%"=="1" (
     echo Обновление программы...
     powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
     echo Замена текущей версии...
-    move /Y "update.bat" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    move /Y "update.bat" "%~dp0%~nx0"
     echo Перезапуск...
-    start "" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    start "" "%~dp0%~nx0"
     exit    
 ) else (
     echo Неверный выбор. Попробуйте снова.
