@@ -124,9 +124,14 @@ if "%softwareChoice%"=="1" (
     set version=Platform nanoCAD
     goto choose_platform_nci_version
 ) else (
-    cls
+    :: cls
     echo.
     echo Неверный выбор. Попробуйте снова. Необходимо ввести порядковый номер программы.
+    echo.
+    echo Нажмите любую клавишу чтобы продолжить . . .
+    pause
+    cls
+    echo.
     goto choose_software
 )
 
@@ -169,7 +174,7 @@ if "%versionChoice%"=="1.0" (
     set version=nanoCAD Механика PRO 2.1
     goto Mechanica_PRO_2_1
 ) else (
-    echo Неверный выбор. Попробуйте снова.
+    echo Неверный ввод версии. Необходимо ввести только номер версии, например - 1.0. Попробуйте снова.
     echo.
     echo Нажмите любую клавишу чтобы продолжить . . .
     pause
@@ -224,7 +229,7 @@ if "%versionChoice%"=="23.0" (
     set version=Платформа nanoCAD 24.5
     goto NC_x64_24_5
 ) else (
-    echo Неверный выбор. Попробуйте снова.
+    echo Неверный ввод версии. Необходимо ввести только номер версии, например - 23.0. Попробуйте снова.
     echo.
     echo Нажмите любую клавишу чтобы продолжить . . .
     pause
@@ -263,7 +268,7 @@ if "%versionChoice%"=="23.0" (
     set version=Platform nanoCAD NCI 24.0
     goto NIC_x64_24_0
 ) else (
-    echo Неверный выбор. Попробуйте снова.
+    echo Неверный ввод версии. Необходимо ввести только номер версии, например - 23.0. Попробуйте снова.
     echo.
     echo Нажмите любую клавишу чтобы продолжить . . .
     pause
