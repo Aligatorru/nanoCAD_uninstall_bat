@@ -7,7 +7,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=003.3.2025
+set verbat=004.3.2025
 
 chcp 65001 >> log.txt
 echo. >> log.txt
