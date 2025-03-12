@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=011.3.2025
+set verbat=2025.3.012
 
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -32,14 +32,14 @@ if exist %temp%\update.bat (
         
         :: Разбиваем версии на компоненты
         for /f "tokens=1-3 delims=." %%a in ("%verbat%") do (
-            set current_major=%%c
+            set current_major=%%a
             set current_minor=%%b
-            set current_build=%%a
+            set current_build=%%c
         )
         for /f "tokens=1-3 delims=." %%a in ("!new_verbat!") do (
-            set new_major=%%c
+            set new_major=%%a
             set new_minor=%%b
-            set new_build=%%a
+            set new_build=%%c
         )
 
         :: Конвертируем в числа (удаляем ведущие нули)
@@ -65,6 +65,13 @@ if exist %temp%\update.bat (
             pause
             move /Y "%temp%\update.bat" "%~dp0%~nx0" >nul
             echo Перезапуск обновленной версии...
+            setlocal enabledelayedexpansion
+            for /L %%i in (1,1,40) do (
+                <nul set /p=.  
+                ping -n 1 -w 200 127.0.0.1 >nul
+            )
+            echo.
+            echo Готово!
             start "" "%~dp0%~nx0"
             exit
         ) else (
