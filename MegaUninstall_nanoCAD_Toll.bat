@@ -66,7 +66,7 @@ if exist %temp%\update.bat (
             start "" "%~dp0%~nx0"
             exit
         ) else (
-            echo [%date% %time%] Версия актуальна >> log.txt
+            echo [%date% %time%] Версия %verbat% актуальна >> log.txt
             echo. 
             echo Версия утилиты %verbat% актуальна, обновление не требуется.
             del %temp%\update.bat
