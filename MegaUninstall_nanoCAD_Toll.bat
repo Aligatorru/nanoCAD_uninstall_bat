@@ -51,7 +51,7 @@ if "%softwareChoice%"=="1" (
     set version=Платформа nanoCAD
     goto choose_platform_nc_version
 ) else if "%softwareChoice%"=="3" (
-    set version=Platform nanoCAD 
+    set version=Platform nanoCAD
     goto choose_platform_nci_version
 ) else if "%softwareChoice%"=="" (
     echo Проверка на сервере
