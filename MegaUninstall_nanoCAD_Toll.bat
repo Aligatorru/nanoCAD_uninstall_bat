@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=007.3.2025
+set verbat=011.3.2025
 
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -139,6 +139,11 @@ if "%softwareChoice%"=="1" (
 
 
 
+
+
+
+
+
 :choose_mechanica_version
 cls
 echo.
@@ -162,16 +167,24 @@ echo.
 
 if "%versionChoice%"=="1.0" (
     set version=nanoCAD Механика PRO 1.0
+    echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_1_0
+
 ) else if "%versionChoice%"=="1.1" (
     set version=nanoCAD Механика PRO 1.1
+    echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_1_1
+
 ) else if "%versionChoice%"=="2.0" (
     set version=nanoCAD Механика PRO 2.0
+    echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_2_0
+
 ) else if "%versionChoice%"=="2.1" (
     set version=nanoCAD Механика PRO 2.1
+    echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_2_1
+
 ) else (
     echo Неверный ввод версии. Необходимо ввести только номер версии, например - 1.0. Попробуйте снова.
     echo.
@@ -214,27 +227,35 @@ set /p versionChoice="Введите номер выбранной версии,
 if "%versionChoice%"=="23.0" (
     set version=Платформа nanoCAD 23.0
     goto NC_x64_23_0
+
 ) else if "%versionChoice%"=="23.1" (
     set version=Платформа nanoCAD 23.1
     goto NC_x64_23_1
+
 ) else if "%versionChoice%"=="23.5" (
     set version=Платформа nanoCAD 23.5
     goto NC_x64_23_5
+
 ) else if "%versionChoice%"=="24.0" (
     set version=Платформа nanoCAD 24.0
     goto NC_x64_24_0
+
 ) else if "%versionChoice%"=="24.1" (
     set version=Платформа nanoCAD 24.1
     goto NC_x64_24_1
+
 ) else if "%versionChoice%"=="24.5" (
     set version=Платформа nanoCAD 24.5
     goto NC_x64_24_5
+
 ) else if "%versionChoice%"=="25.0" (
     set version=Платформа nanoCAD 25.0
     goto NC_x64_25_0
+
 ) else if "%versionChoice%"=="25.1" (
     set version=Платформа nanoCAD 25.1
     goto NC_x64_25_1
+
 ) else (
     echo Неверный ввод версии. Необходимо ввести только номер версии, например - 23.0. Попробуйте снова.
     echo.
@@ -343,6 +364,75 @@ echo Очистка Реестра завершена!
 echo Очистка Реестра завершена: %date% %time% >> log.txt
 
 goto Exit
+
+
+
+
+
+
+
+
+
+:Mechanica_PRO_1_1
+echo Выбрано удаление %version%.  %date% %time% >> log.txt
+cls
+echo.
+echo ███╗░░░███╗███████╗░█████╗░██╗░░██╗░█████╗░███╗░░██╗██╗░█████╗░░█████╗░  ██████╗░██████╗░░█████╗░  ░░███╗░░░░░░░███╗ 
+echo ████╗░████║██╔════╝██╔══██╗██║░░██║██╔══██╗████╗░██║██║██╔══██╗██╔══██╗  ██╔══██╗██╔══██╗██╔══██╗  ░████║░░░░░░████║ 
+echo ██╔████╔██║█████╗░░██║░░╚═╝███████║███████║██╔██╗██║██║██║░░╚═╝███████║  ██████╔╝██████╔╝██║░░██║  ██╔██║░░░░░██╔██║ 
+echo ██║╚██╔╝██║██╔══╝░░██║░░██╗██╔══██║██╔══██║██║╚████║██║██║░░██╗██╔══██║  ██╔═══╝░██╔══██╗██║░░██║  ╚═╝██║░░░░░╚═╝██║ 
+echo ██║░╚═╝░██║███████╗╚█████╔╝██║░░██║██║░░██║██║░╚███║██║╚█████╔╝██║░░██║  ██║░░░░░██║░░██║╚█████╔╝  ███████╗██╗███████╗
+echo ╚═╝░░░░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░╚════╝░╚═╝░░╚═╝  ╚═╝░░░░░╚═╝░░╚═╝░╚════╝░  ╚══════╝╚═╝╚══════╝
+echo.
+echo Эта утилита запустит удаление %version%. 
+echo.
+echo В скрытом режиме будут очищены все папки этой программы в Program Files, Program Data и AppData.
+echo Далее в системном реестре будет очищены разделы Nanosoft для %version%.
+echo.
+echo Если готовы, нажмите любую клавишу чтобы продолжить . . .
+pause
+echo Запуск удаления %version%
+echo Запуск удаления %version% %date% %time% >> log.txt
+
+msiexec /x {1985C8B2-F9C3-4C3F-8ED5-700D16E4B928} /qn
+msiexec /x {149C8E28-D202-452C-A914-3AED9C9CCF99} /qn
+msiexec /x {1985C8B2-F9C3-4C3F-8ED5-700D16E4B928} /qn
+
+echo Удаление %version% завершено!
+echo Удаление %version% завершено: %date% %time% >> log.txt
+
+echo Очистка ProgramFiles, ProgramData и AppData...
+echo Очистка ProgramFiles, ProgramData и AppData: %date% %time% >> log.txt
+
+del "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 1.1" /Q /S
+rmdir /S /Q "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 1.1"
+del "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 1.1"  /Q /S
+rmdir /S /Q "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 1.1"
+del "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 1.1"  /Q /S
+rmdir /S /Q "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 1.1"
+
+echo Очистка ProgramFiles, ProgramData и AppData завершена!
+echo Очистка ProgramFiles, ProgramData и AppData завершена: %date% %time% >> log.txt
+
+echo Очистка Реестра...
+echo Очистка Реестра: %date% %time% >> log.txt
+
+REG DELETE "HKCU\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\1.1" /f
+REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\1.1" /f
+
+echo Очистка Реестра завершена!
+echo Очистка Реестра завершена: %date% %time% >> log.txt
+
+goto Exit
+
+
+
+
+
+
+
+
+
 
 
 :Mechanica_PRO_2_0
