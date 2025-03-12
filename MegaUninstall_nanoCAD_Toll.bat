@@ -1,4 +1,11 @@
 @echo off
+:: Проверяем права администратора
+net session >nul 2>&1
+if %errorLevel% neq 0 (
+    echo Требуются права администратора. Перезапуск...
+    powershell -Command "Start-Process '%~dpnx0' -Verb RunAs"
+    exit
+)
 chcp 65001 >> log.txt
 echo. >> log.txt
 echo Запуск утилиты.  %date% %time% >> log.txt
