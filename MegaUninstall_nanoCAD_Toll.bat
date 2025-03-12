@@ -23,7 +23,7 @@ echo  ███████ ████████████    
 echo  ███████ ██████████        ████████████ █████████████████████████ ██ ████████ ████████  █████████ ███ 
 echo  ███████ ████████          █ █ █ ███ ███████  █████   █ ███ █████ █  ██  ██ ███  ███ █████   ██ ██  █
 echo.
-echo Версия программы 3.2025. Для проверки обновлений нажмите Enter.
+echo Версия скрипта 3.2025 Для проверки обновления нажмите Enter.
 echo.
 echo.
 echo Какое приложение вы хотите удалить?
@@ -32,20 +32,12 @@ echo 2. Платформа nanoCAD x64
 echo 3. Platform nanoCAD x64
 echo.
 echo.
-set /p softwareChoice="Введите номер вашего выбора (1, 2 или 3): "
-echo.
+set /p softwareChoice="Введите номер выбранной программы (1, 2 или 3): "
 echo.
 
-if "%updateChoice%"=="" (
-    echo Обновление программы...
-    powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
-    echo Замена текущей версии...
-    move /Y "update.bat" "%~dp0MegaUninstall nanoCAD Toll.bat"
-    echo Перезапуск...
-    start "" "%~dp0MegaUninstall nanoCAD Toll.bat"
-    exit
-    
-)
+echo.
+
+
 
 
 
@@ -58,6 +50,23 @@ if "%softwareChoice%"=="1" (
 ) else if "%softwareChoice%"=="3" (
     set version=Platform nanoCAD 
     goto choose_platform_nci_version
+) else if "%softwareChoice%"=="" (
+    echo Загрузка
+    setlocal enabledelayedexpansion
+    for /L %%i in (1,1,40) do (
+        <nul set /p=.  
+        ping -n 1 -w 200 127.0.0.1 >nul
+    )
+    echo.
+    echo Готово!
+    set /p softwareChoice="Нажмите клавишу Enter для обновления..."
+    echo Обновление программы...
+    powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
+    echo Замена текущей версии...
+    move /Y "update.bat" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    echo Перезапуск...
+    start "" "%~dp0MegaUninstall nanoCAD Toll.bat"
+    exit    
 ) else (
     echo Неверный выбор. Попробуйте снова.
     goto choose_software
