@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >> log.txt
 :: Проверяем права администратора
 net session >nul 2>&1
 if %errorLevel% neq 0 (
@@ -7,13 +8,88 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=004.3.2025
+set verbat=005.3.2025
 
-chcp 65001 >> log.txt
+:: Автоматическая проверка обновлений при старте
 echo. >> log.txt
 echo Запуск утилиты версии %verbat%.  %date% %time% >> log.txt
+echo [%date% %time%] Начата проверка обновлений >> log.txt
+
+:: Скачиваем обновление во временный файл
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', '%temp%\update.bat')" 2>>log.txt
+
+if exist %temp%\update.bat (
+    setlocal enabledelayedexpansion
+    :: Извлекаем новую версию из update.bat
+    set "new_verbat="
+    for /f "tokens=2 delims==" %%a in ('findstr /b /c:"set verbat=" %temp%\update.bat') do set new_verbat=%%a
+    
+    if defined new_verbat (
+        :: Удаляем кавычки если есть
+        set new_verbat=!new_verbat:"=!
+        
+        :: Разбиваем версии на компоненты
+        for /f "tokens=1-3 delims=." %%a in ("%verbat%") do (
+            set current_major=%%c
+            set current_minor=%%b
+            set current_build=%%a
+        )
+        for /f "tokens=1-3 delims=." %%a in ("!new_verbat!") do (
+            set new_major=%%c
+            set new_minor=%%b
+            set new_build=%%a
+        )
+
+        :: Конвертируем в числа (удаляем ведущие нули)
+        set /a current_major=!current_major!
+        set /a current_minor=!current_minor!
+        set /a current_build=!current_build!
+        set /a new_major=!new_major!
+        set /a new_minor=!new_minor!
+        set /a new_build=!new_build!
+        
+        :: Сравниваем версии
+        set update_needed=0
+        if !new_major! gtr !current_major! set update_needed=1
+        if !new_major! equ !current_major! if !new_minor! gtr !current_minor! set update_needed=1
+        if !new_major! equ !current_major! if !new_minor! equ !current_minor! if !new_build! gtr !current_build! set update_needed=1
+
+        if !update_needed! equ 1 (
+            echo. 
+            echo [%date% %time%] Найдена новая версия: !new_verbat! >> log.txt
+            echo Версия утилиты %verbat%. Обнаружена новая версия: !new_verbat!
+            echo. 
+            echo Нажмите любую клавишу чтобы обновить утилиту . . .
+            pause
+            move /Y "%temp%\update.bat" "%~dp0%~nx0" >nul
+            echo Перезапуск обновленной версии...
+            start "" "%~dp0%~nx0"
+            exit
+        ) else (
+            echo [%date% %time%] Версия актуальна >> log.txt
+            echo. 
+            echo Версия утилиты %verbat% актуальна, обновление не требуется.
+            del %temp%\update.bat
+        )
+    ) else (
+        echo [%date% %time%] Ошибка чтения версии из обновления >> log.txt
+        echo. 
+        echo Версия утилиты %verbat%. Ошибка проверки обновления
+        del %temp%\update.bat
+    )
+    endlocal
+) else (
+    echo [%date% %time%] Ошибка скачивания обновления >> log.txt
+    echo. 
+    echo Версия утилиты %verbat%. Не удалось проверить обновления
+)
+
 :choose_software
 echo.
+@echo off
+chcp 65001 >> log.txt
+
+::echo.
 echo.                                                                                                     
 echo      ████████ ███████                                                ███████▄     ███     ████████▄   
 echo    ██████████ ███████      █▄█████    ████████ █▄█████    █████▄   █████ ████    █████    ███  █████▄ 
@@ -26,23 +102,14 @@ echo  ███████ ████████████    
 echo  ███████ ██████████        ████████████ █████████████████████████ ██ ████████ ████████  █████████ ███ 
 echo  ███████ ████████          █ █ █ ███ ███████  █████   █ ███ █████ █  ██  ██ ███  ███ █████   ██ ██  █
 echo.
-echo Версия утилиты %verbat%. Для проверки обновления нажмите Enter.
-echo.
+:: echo Версия утилиты %verbat%
 echo.
 echo Какую программу вы хотите удалить?
 echo 1. nanoCAD Механика PRO
 echo 2. Платформа nanoCAD x64
 echo 3. Platform nanoCAD x64
 echo.
-echo.
 set /p softwareChoice="Введите номер выбранной программы (1, 2 или 3): "
-echo.
-
-echo.
-
-
-
-
 
 if "%softwareChoice%"=="1" (
     set version=nanoCAD Механика PRO
@@ -53,30 +120,12 @@ if "%softwareChoice%"=="1" (
 ) else if "%softwareChoice%"=="3" (
     set version=Platform nanoCAD
     goto choose_platform_nci_version
-) else if "%softwareChoice%"=="" (
-    echo Проверка на сервере
-    echo Запрошено обновление утилиты: %date% %time% >> log.txt
-    setlocal enabledelayedexpansion
-    for /L %%i in (1,1,40) do (
-        <nul set /p=.  
-        ping -n 1 -w 200 127.0.0.1 >nul
-    )
-    echo.
-    echo Готово!
-    set /p softwareChoice="Нажмите клавишу Enter для перезапуска утилиты..."
-    echo Обновление утилиты...
-    echo Перезапуск утилиты для обновления. Текуая версия: %verbat%. %date% %time% >> log.txt
-    powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', 'update.bat')"
-    echo Замена текущей версии...
-    move /Y "update.bat" "%~dp0%~nx0"
-    echo Перезапуск...
-    start "" "%~dp0%~nx0"
-    exit    
 ) else (
-    echo Неверный выбор. Попробуйте снова.
+    cls
+    echo.
+    echo Неверный выбор. Попробуйте снова. Необходимо ввести порядковый номер программы.
     goto choose_software
 )
-
 
 
 
