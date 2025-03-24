@@ -18,7 +18,7 @@ echo Запуск утилиты версии %verbat%.  %date% %time% >> log.tx
 echo [%date% %time%] Начата проверка обновлений >> log.txt
 
 :: Скачиваем обновление во временный файл
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', '%temp%\update.bat')" 2>>log.txt
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 
 if exist %temp%\update.bat (
     setlocal enabledelayedexpansion
