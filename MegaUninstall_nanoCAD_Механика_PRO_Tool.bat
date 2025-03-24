@@ -18,7 +18,7 @@ echo Запуск утилиты версии %verbat%.  %date% %time% >> log.tx
 echo [%date% %time%] Начата проверка обновлений >> log.txt
 
 :: Скачиваем обновление во временный файл
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Toll.bat', '%temp%\update.bat')" 2>>log.txt
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_MechanicaPRO_Toll.bat', '%temp%\update.bat')" 2>>log.txt
 
 if exist %temp%\update.bat (
     setlocal enabledelayedexpansion
@@ -114,8 +114,8 @@ echo Нажмите любую клавишу для выбора продукт
 pause
 
 
-::set version=nanoCAD Механика PRO
-::goto choose_mechanica_version
+set version=nanoCAD Механика PRO
+goto choose_mechanica_version
 
 cls
 echo.
