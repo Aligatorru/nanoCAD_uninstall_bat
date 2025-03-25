@@ -1,4 +1,4 @@
-# MegaUninstall nanoCAD Toll
+# MegaUninstall nanoCAD Tool
 Bat file for uninstall nanoCAD Aplications
 
 Этот скрипт предназначен для автоматического удаления программ nanoCAD, включая nanoCAD Механика PRO и Платформу nanoCAD x64.
@@ -37,6 +37,6 @@ Bat file for uninstall nanoCAD Aplications
 
 
 
-# MegaUninstall nanoCAD Mechanica PRO Toll
+# MegaUninstall nanoCAD Mechanica PRO Tool
 
 Этот скрипт является веткой, позволяющей запускать программу с экрана выбора nanoCAD Механика PRO, а при необходимости удалить Платформу nanoCAD x64, перейти к главному меню.
