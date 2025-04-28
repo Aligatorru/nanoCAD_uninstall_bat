@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2025.3.015
+set verbat=2025.4.001
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -1139,6 +1139,7 @@ echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
 msiexec /x {DC9115FB-521F-428A-B734-8A4E715964AD} /qn
+msiexec /x {FBA617B5-5198-484A-A51D-B149FE807893} /qn
 
 echo Удаление %version% завершено!
 echo Удаление %version% завершено: %date% %time% >> log.txt
