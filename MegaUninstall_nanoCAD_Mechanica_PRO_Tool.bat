@@ -10,14 +10,16 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2025.7.001
+set verbat=2025.7.002
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
 echo Запуск утилиты версии %verbat%.  %date% %time% >> log.txt
 echo [%date% %time%] Начата проверка обновлений >> log.txt
 
-:: Скачиваем обновление во временный файл
+:: Скачиваем обновление во временный файл для Платформы наноКАД + закоментить строки 143-144
+:: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Tool.bat', '%temp%\update.bat')" 2>>log.txt
+:: Скачиваем обновление во временный файл для наноКАД Механика ПРО + раскоментить строки 143-144
 powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 
 if exist %temp%\update.bat (
@@ -128,17 +130,74 @@ echo  ███████ ████████        
 echo.
 echo Добро пожаловать в утилиту, предназначенную для полного удаления программ nanoCAD, очистки связанных с программой папок в Program Files, Program Data и AppData, удаления параметров в системном реестре.
 echo.
+
+
+:: Старт Мега Деинсталлятора наноКАД Механика ПРО Бета-версия
+:: goto beta_screen
+
+
 echo Нажмите любую клавишу для выбора продукта . . .
 pause
 
-
+:: Старт Мега Деинсталлятора наноКАД Механика ПРО
 set version=nanoCAD Механика PRO
 goto choose_mechanica_version
+
 
 cls
 echo.
 echo Версия утилиты %verbat%
 goto choose_software
+
+
+
+
+
+
+
+
+
+:beta_screen
+setlocal
+echo.
+echo Эта утилита запустит удаление nanoCAD Механика PRO Beta 2.0
+set /p versionChoice="Для продолжения нажмите Enter, для выбора другой версии — клавишу N: "
+
+
+if "%versionChoice%"=="" (
+    set version=nanoCAD Механика PRO 2.0
+    echo Введено удаление %version%. %date% %time% >> log.txt
+    goto Mechanica_PRO_2_0
+) else if /i "%versionChoice%"=="n" (
+    set version=Main Menu
+    echo Переход в основное меню.  %date% %time% >> log.txt
+    cls
+    echo.
+    echo Версия утилиты %verbat%
+    goto choose_software
+) else (
+    :: cls
+    echo.
+    echo Неверный вввод! Enter — для продолжения, клавиша N — для выбора другой версии.
+    echo.
+    echo Нажмите любую клавишу чтобы продолжить . . .
+    pause
+    cls
+    echo.
+    echo Версия утилиты %verbat%
+    goto start_screen
+)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
