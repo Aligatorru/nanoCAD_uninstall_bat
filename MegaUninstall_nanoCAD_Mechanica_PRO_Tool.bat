@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2025.6.001
+set verbat=2025.7.001
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -221,7 +221,7 @@ echo     ╚═╝     ╚═╝╚══════╝ ╚
 echo.
 echo Вы выбрали удаление программы %version%. Какую версию вы хотите удалить?
 echo.
-echo  Поддерживаемые версии:
+echo   Поддерживаемые версии:
 echo.
 echo   nanoCAD Механика PRO 1.0
 echo   nanoCAD Механика PRO 1.1
@@ -436,6 +436,61 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 1.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
 msiexec /x {DA21CE44-C035-480F-9C66-EE92184174FE} /qn
 msiexec /x {99E4B037-71B6-48B9-BCDF-02934C87B099} /qn
 msiexec /x {DA21CE44-C035-480F-9C66-EE92184174FE} /qn
@@ -495,6 +550,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 1.1"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {1985C8B2-F9C3-4C3F-8ED5-700D16E4B928} /qn
 msiexec /x {149C8E28-D202-452C-A914-3AED9C9CCF99} /qn
@@ -557,6 +667,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 2.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {3171D2FA-ADA3-4EE2-BADC-F87F3DE2CFFD} /qn
 msiexec /x {61DBB16C-1776-4644-90BF-3C7B1A239A31} /qn
@@ -621,9 +786,60 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
-msiexec /x {} /qn
-msiexec /x {} /qn
-msiexec /x {} /qn
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 2.1"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 echo Удаление %version% завершено!
 echo Удаление %version% завершено: %date% %time% >> log.txt
@@ -679,6 +895,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 2.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x { } /qn
 msiexec /x { } /qn
@@ -739,6 +1010,61 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 23.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
 msiexec /x {21AAC29C-6E4D-4945-94EF-DF1D922E42EE} /qn
 
 echo Удаление %version% завершено!
@@ -796,6 +1122,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 23.1"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {07DEA322-2D17-48AB-8DC1-D1EDB7F61D39} /qn
 msiexec /x {42407AF9-E54F-4E8A-8335-2CC93041C4D2} /qn
@@ -857,6 +1238,61 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 23.5"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
 msiexec /x {C87A934D-53E1-49B0-8EED-8D9C97BDD073} /qn
 
 echo Удаление %version% завершено!
@@ -912,6 +1348,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 24.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {03F320E4-41A7-4785-B7AF-5B567A1CCECE} /qn
 
@@ -971,6 +1462,61 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 24.1"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
 msiexec /x {85AE025B-5A09-4422-8AE9-08FE7B10D0E7} /qn
 
 echo Удаление %version% завершено!
@@ -1027,6 +1573,61 @@ pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
 
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 24.5"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
 msiexec /x {7788FD18-5EDE-4987-B459-5485905CF452} /qn
 
 echo Удаление %version% завершено!
@@ -1080,6 +1681,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 25.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {413ADC1D-6F78-4A37-B7BC-9FD9F762A5C3} /qn
 
@@ -1137,6 +1793,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Платформа nanoCAD x64 25.1"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {DC9115FB-521F-428A-B734-8A4E715964AD} /qn
 msiexec /x {FBA617B5-5198-484A-A51D-B149FE807893} /qn
@@ -1211,6 +1922,61 @@ echo Если готовы, нажмите любую клавишу чтобы 
 pause
 echo Запуск удаления %version%
 echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=Platform nanoCAD x64 23.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
 
 msiexec /x {03F8FF71-1A32-40FC-83B5-E86C6F1449D4} /qn
 
