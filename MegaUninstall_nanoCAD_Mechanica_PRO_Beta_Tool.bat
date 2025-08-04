@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2025.7.004
+set verbat=2025.7.001
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -18,11 +18,11 @@ echo Запуск утилиты версии %verbat%.  %date% %time% >> log.tx
 echo [%date% %time%] Начата проверка обновлений >> log.txt
 
 :: Скачиваем обновление во временный файл для Платформы наноКАД + закоментить строки 138, 145-146
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Tool.bat', '%temp%\update.bat')" 2>>log.txt
+:: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 :: Скачиваем обновление во временный файл для наноКАД Механика ПРО + раскоментить строки 145-146
 :: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 :: Скачиваем обновление во временный файл для наноКАД Механика ПРО Бета + раскоментить строку 138
-:: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Beta_Tool.bat', '%temp%\update.bat')" 2>>log.txt
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Beta_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 
 if exist %temp%\update.bat (
     setlocal enabledelayedexpansion
@@ -135,7 +135,7 @@ echo.
 
 
 :: Старт Мега Деинсталлятора наноКАД Механика ПРО Бета-версия
-:: goto beta_screen
+goto beta_screen
 
 
 echo Нажмите любую клавишу для выбора продукта . . .
@@ -287,7 +287,7 @@ echo.
 echo   nanoCAD Механика PRO 1.0
 echo   nanoCAD Механика PRO 1.1
 echo   nanoCAD Механика PRO 2.0
-echo   nanoCAD Механика PRO 2.5
+:: echo   nanoCAD Механика PRO 2.5
 echo.
 echo  Для перехода в меню выбора других продуктов nanoCAD введите 0 (ноль)
 echo.
@@ -364,7 +364,7 @@ echo   Платформа nanoCAD 24.0
 echo   Платформа nanoCAD 24.1
 echo   Платформа nanoCAD 24.5
 echo   Платформа nanoCAD 25.0
-echo   Платформа nanoCAD 25.1
+:: echo   Платформа nanoCAD 25.1
 echo.
 echo  Для перехода в меню выбора других продуктов nanoCAD введите 0 (ноль)
 echo.

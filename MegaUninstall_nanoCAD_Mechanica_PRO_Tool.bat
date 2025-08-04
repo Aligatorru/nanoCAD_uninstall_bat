@@ -10,17 +10,19 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2025.7.003
+set verbat=2025.7.004
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
 echo Запуск утилиты версии %verbat%.  %date% %time% >> log.txt
 echo [%date% %time%] Начата проверка обновлений >> log.txt
 
-:: Скачиваем обновление во временный файл для Платформы наноКАД + закоментить строки 143-144
+:: Скачиваем обновление во временный файл для Платформы наноКАД + закоментить строки 138, 145-146
 :: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Tool.bat', '%temp%\update.bat')" 2>>log.txt
-:: Скачиваем обновление во временный файл для наноКАД Механика ПРО + раскоментить строки 143-144
+:: Скачиваем обновление во временный файл для наноКАД Механика ПРО + раскоментить строки 145-146
 powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Tool.bat', '%temp%\update.bat')" 2>>log.txt
+:: Скачиваем обновление во временный файл для наноКАД Механика ПРО Бета + раскоментить строку 138
+:: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://aligatorru.github.io/nanoCAD_uninstall_bat/MegaUninstall_nanoCAD_Mechanica_PRO_Beta_Tool.bat', '%temp%\update.bat')" 2>>log.txt
 
 if exist %temp%\update.bat (
     setlocal enabledelayedexpansion
