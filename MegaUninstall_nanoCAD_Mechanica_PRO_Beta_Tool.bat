@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2026.5.001
+set verbat=2026.5.002
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -321,7 +321,7 @@ if "%versionChoice%"=="1.0" (
     goto Mechanica_PRO_2_5
 
 ) else if "%versionChoice%"=="3.0" (
-    set version=nanoCAD Механика PRO 2.5
+    set version=nanoCAD Механика PRO 3.0
     echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_3_0
 
