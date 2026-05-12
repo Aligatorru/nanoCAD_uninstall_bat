@@ -10,7 +10,7 @@ if %errorLevel% neq 0 (
     exit
 )
 
-set verbat=2026.2.001
+set verbat=2026.5.001
 cls
 :: Автоматическая проверка обновлений при старте
 echo. >> log.txt
@@ -288,6 +288,7 @@ echo   nanoCAD Механика PRO 1.0
 echo   nanoCAD Механика PRO 1.1
 echo   nanoCAD Механика PRO 2.0
 echo   nanoCAD Механика PRO 2.5
+echo   nanoCAD Механика PRO 3.0
 echo.
 echo  Для перехода в меню выбора других продуктов nanoCAD введите 0 (ноль)
 echo.
@@ -318,6 +319,11 @@ if "%versionChoice%"=="1.0" (
     set version=nanoCAD Механика PRO 2.5
     echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
     goto Mechanica_PRO_2_5
+
+) else if "%versionChoice%"=="3.0" (
+    set version=nanoCAD Механика PRO 2.5
+    echo Введено удаление %version% %versionChoice%.  %date% %time% >> log.txt
+    goto Mechanica_PRO_3_0
 
 ) else if "%versionChoice%"=="0" (
     set version=Main Menu
@@ -1111,6 +1117,360 @@ echo Очистка Реестра завершена: %date% %time% >> log.txt
 
 goto Exit
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:Mechanica_PRO_3_0
+echo Выбрано удаление %version%.  %date% %time% >> log.txt
+cls
+echo.
+echo ███╗   ███╗███████╗██╗  ██╗ █████╗ ██╗  ██╗██╗  ███╗██╗  ██╗ █████╗   ██████╗ ██████╗  █████╗   ██████╗     █████╗ 
+echo ████╗ ████║██╔════╝╚██╗██╔╝██╔══██╗██║  ██║██║ ████║██║ ██╔╝██╔══██╗  ██╔══██╗██╔══██╗██╔══██╗  ╚════██╗   ██╔══██╗
+echo ██╔████╔██║█████╗   ╚███╔╝ ███████║███████║██║██╔██║█████═╝ ███████║  ██████╔╝██████╔╝██║  ██║    ███╔═╝   ██║  ██║
+echo ██║╚██╔╝██║██╔══╝   ██╔██╗ ██╔══██║██╔══██║████╔╝██║██╔═██╗ ██╔══██║  ██╔═══╝ ██╔══██╗██║  ██║    ╚══██╗   ██║  ██║
+echo ██║ ╚═╝ ██║███████╗██╔╝╚██╗██║  ██║██║  ██║███╔╝ ██║██║ ╚██╗██║  ██║  ██║     ██║  ██║╚█████╔╝  ██████╔╝██╗╚█████╔╝
+echo ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  ╚═╝     ╚═╝  ╚═╝ ╚════╝   ╚═════╝ ╚═╝ ╚════╝
+echo.
+echo Эта утилита запустит удаление %version%. 
+echo.
+echo В скрытом режиме будут очищены все папки этой программы в Program Files, Program Data и AppData.
+echo Далее в системном реестре будет очищены разделы Nanosoft для %version%.
+echo.
+echo Если готовы, нажмите любую клавишу чтобы продолжить . . .
+pause
+echo Запуск удаления %version%
+echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 3.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
+echo Удаление %version% завершено!
+echo Удаление %version% завершено: %date% %time% >> log.txt
+
+echo Очистка ProgramFiles, ProgramData и AppData...
+echo Очистка ProgramFiles, ProgramData и AppData: %date% %time% >> log.txt
+
+del "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 3.0" /Q /S
+rmdir /S /Q "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 3.0"
+del "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 3.0"  /Q /S
+rmdir /S /Q "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 3.0"
+del "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 3.0"  /Q /S
+rmdir /S /Q "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 3.0"
+echo Очистка ProgramFiles, ProgramData и AppData завершена: %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 3.0"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+echo Очистка Реестра...
+echo Очистка Реестра: %date% %time% >> log.txt
+
+REG DELETE "HKCU\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\3.0" /f
+REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\3.0" /f
+
+echo Очистка Реестра завершена!
+echo Очистка Реестра завершена: %date% %time% >> log.txt
+
+goto Exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:Mechanica_PRO_3_5
+echo Выбрано удаление %version%.  %date% %time% >> log.txt
+cls
+echo.
+echo ███╗   ███╗███████╗██╗  ██╗ █████╗ ██╗  ██╗██╗  ███╗██╗  ██╗ █████╗   ██████╗ ██████╗  █████╗   ██████╗    ███████╗
+echo ████╗ ████║██╔════╝╚██╗██╔╝██╔══██╗██║  ██║██║ ████║██║ ██╔╝██╔══██╗  ██╔══██╗██╔══██╗██╔══██╗  ╚════██╗   ██╔════╝
+echo ██╔████╔██║█████╗   ╚███╔╝ ███████║███████║██║██╔██║█████═╝ ███████║  ██████╔╝██████╔╝██║  ██║    ███╔═╝   ██████╗ 
+echo ██║╚██╔╝██║██╔══╝   ██╔██╗ ██╔══██║██╔══██║████╔╝██║██╔═██╗ ██╔══██║  ██╔═══╝ ██╔══██╗██║  ██║    ╚══██╗   ╚════██╗
+echo ██║ ╚═╝ ██║███████╗██╔╝╚██╗██║  ██║██║  ██║███╔╝ ██║██║ ╚██╗██║  ██║  ██║     ██║  ██║╚█████╔╝  ██████╔╝██╗██████╔╝
+echo ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  ╚═╝     ╚═╝  ╚═╝ ╚════╝   ╚═════╝ ╚═╝╚═════╝ 
+echo.
+echo Эта утилита запустит удаление %version%. 
+echo.
+echo В скрытом режиме будут очищены все папки этой программы в Program Files, Program Data и AppData.
+echo Далее в системном реестре будет очищены разделы Nanosoft для %version%.
+echo.
+echo Если готовы, нажмите любую клавишу чтобы продолжить . . .
+pause
+echo Запуск удаления %version%
+echo Запуск удаления %version% %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 3.5"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+
+echo Удаление %version% завершено!
+echo Удаление %version% завершено: %date% %time% >> log.txt
+
+echo Очистка ProgramFiles, ProgramData и AppData...
+echo Очистка ProgramFiles, ProgramData и AppData: %date% %time% >> log.txt
+
+del "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 3.5" /Q /S
+rmdir /S /Q "%APPDATA%\Nanosoft\nanoCAD Mechanica PRO 3.5"
+del "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 3.5"  /Q /S
+rmdir /S /Q "%ProgramData%\Nanosoft\nanoCAD Mechanica PRO 3.5"
+del "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 3.5"  /Q /S
+rmdir /S /Q "%ProgramFiles%\Nanosoft\nanoCAD Mechanica PRO 3.5"
+echo Очистка ProgramFiles, ProgramData и AppData завершена: %date% %time% >> log.txt
+
+
+setlocal enabledelayedexpansion
+
+set "PROGRAM_NAME_PART=nanoCAD Механика PRO 3.5"
+set "MSI_EXEC=MsiExec.exe"
+set "MAIN_LOG_FILE=%~dp0log.txt"
+set "MSI_LOG_PATH=%~dp0nanocad_uninstall_msi_details.log"
+
+:: Функция логирования с датой и временем
+set "TIMESTAMP_CMD=for /f %%a in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss.fff\""') do set TIMESTAMP=%%a"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Начало удаления программы === >> "%MAIN_LOG_FILE%"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Ищем GUID через PowerShell... >> "%MAIN_LOG_FILE%"
+
+:: Поиск GUID
+for /f "usebackq delims=" %%i in (`powershell -Command "Get-WmiObject Win32_Product | Where-Object { $_.Name -like '*%PROGRAM_NAME_PART%*' } | Select-Object -ExpandProperty IdentifyingNumber"`) do (
+    set "RAW_GUID=%%i"
+)
+
+:: Очистка пробелов и скобок
+set "PRODUCT_GUID=!RAW_GUID:{=!"
+set "PRODUCT_GUID=!PRODUCT_GUID:}=!"
+set "PRODUCT_GUID=!PRODUCT_GUID: =!"
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] Найден GUID (очищенный): !PRODUCT_GUID! >> "%MAIN_LOG_FILE%"
+
+if defined PRODUCT_GUID (
+    echo [%TIMESTAMP%] Запускаем деинсталляцию через MsiExec >> "%MAIN_LOG_FILE%"
+    echo Команда: %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+
+    %MSI_EXEC% /X{!PRODUCT_GUID!} /qn /L*v "%MSI_LOG_PATH%"
+    set "UNINSTALL_RESULT=!errorlevel!"
+
+    %TIMESTAMP_CMD%
+    if !UNINSTALL_RESULT! equ 0 (
+        echo [%TIMESTAMP%] Удаление завершено успешно. >> "%MAIN_LOG_FILE%"
+    ) else (
+        echo [%TIMESTAMP%] Ошибка удаления. Код: !UNINSTALL_RESULT! >> "%MAIN_LOG_FILE%"
+        echo Проверьте лог: "%MSI_LOG_PATH%" >> "%MAIN_LOG_FILE%"
+    )
+) else (
+    %TIMESTAMP_CMD%
+    echo [%TIMESTAMP%] Программа не найдена по строке "%PROGRAM_NAME_PART%" >> "%MAIN_LOG_FILE%"
+)
+
+%TIMESTAMP_CMD%
+echo [%TIMESTAMP%] === Конец скрипта === >> "%MAIN_LOG_FILE%"
+
+endlocal
+
+echo Очистка Реестра...
+echo Очистка Реестра: %date% %time% >> log.txt
+
+REG DELETE "HKCU\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\3.5" /f
+REG DELETE "HKLM\SOFTWARE\Nanosoft\nanoCAD Mechanica PRO\3.5" /f
+
+echo Очистка Реестра завершена!
+echo Очистка Реестра завершена: %date% %time% >> log.txt
+
+goto Exit
 
 
 
